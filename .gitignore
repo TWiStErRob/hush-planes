@@ -11,3 +11,5 @@
 /*.ipr
 /.idea
 */*.iml
+/model/build
+/backend/build
