@@ -1,5 +1,7 @@
 package dft.hushplanes.android;
 
+import org.slf4j.*;
+
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 
@@ -8,11 +10,14 @@ import com.google.android.gms.maps.model.*;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
 
+	private static final Logger LOG = LoggerFactory.getLogger(MapsActivity.class);
+
 	private GoogleMap mMap;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		LOG.trace("Inflating map");
 		setContentView(R.layout.activity_maps);
 		// Obtain the SupportMapFragment and get notified when the map is ready to be used.
 		SupportMapFragment mapFragment = (SupportMapFragment)getSupportFragmentManager()

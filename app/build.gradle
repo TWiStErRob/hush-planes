@@ -39,6 +39,7 @@ dependencies {
 
 	compile 'com.android.support:appcompat-v7:25.3.0'
 	compile 'com.google.android.gms:play-services-maps:10.2.1'
+	compile 'org.slf4j:slf4j-api:1.7.24'
 
 	testCompile 'junit:junit:4.12'
 
