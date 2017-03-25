@@ -33,9 +33,9 @@
 			android:name=".AR_Tests.Augmented_Reality_Activity"
 			android:label="Overlay View">
 			<intent-filter android:label="Hush! Planes Overlay">
-				<action android:name="android.intent.action.VIEW" />
+				<action android:name="android.intent.action.MAIN" />
 
-				<category android:name="android.intent.category.ALTERNATIVE" />
+				<category android:name="android.intent.category.LAUNCHER" />
 			</intent-filter>
 		</activity>
 	</application>
