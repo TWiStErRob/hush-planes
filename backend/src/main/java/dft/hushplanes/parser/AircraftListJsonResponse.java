@@ -74,7 +74,7 @@ public class AircraftListJsonResponse {
 		/**
 		 * The unique identifier of the aircraft.
 		 */
-		int Id;
+		long Id;
 		/**
 		 * The number of seconds that the aircraft has been tracked for.
 		 */
