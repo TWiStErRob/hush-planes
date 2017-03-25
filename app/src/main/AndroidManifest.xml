@@ -30,7 +30,7 @@
 			</intent-filter>
 		</activity>
 		<activity
-			android:name=".AR_Tests.Augmented_Reality_Activity"
+			android:name=".AR_Tests.AugmentedRealityActivity"
 			android:label="Overlay View"
 			android:screenOrientation="landscape">
 			<intent-filter android:label="Hush! Planes Overlay">

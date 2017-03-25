@@ -1,12 +1,9 @@
 package dft.hushplanes.android.AR_Tests.Camera;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
+import java.util.*;
 
-import java.util.Collection;
-import java.util.Collections;
+import org.slf4j.*;
 
 import android.annotation.TargetApi;
 import android.content.Context;
@@ -14,16 +11,13 @@ import android.os.Build.*;
 import android.os.*;
 import android.support.annotation.*;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.*;
 import android.widget.Toast;
-
-
-
 
 @UiThread
 // Deprecation warnings are constrained to methods by using FQCNs, because suppression doesn't work on imports.
 public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback {
+    private static final Logger LOG = LoggerFactory.getLogger(CameraPreview.class);
 
     public interface CameraPreviewListener {
         void onCreate(CameraPreview preview);
@@ -68,9 +62,10 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
     private @Nullable CameraHolder cameraHolder = null;
     private @NonNull CameraPreviewListener listener = new CameraPreviewListenerAdapter();
 
-    public CameraPreview(Context context) {
-        super(context);
-        Log.d("CameraPreview", "");
+    public CameraPreview(Context context, AttributeSet attributeset) {
+        super(context, attributeset);
+        LOG.trace("CameraPreview");
+
         getHolder().addCallback(this);
         getHolder().addCallback(thread);
         initCompat();
@@ -97,7 +92,7 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
     }
 
     @Override public void surfaceCreated(SurfaceHolder holder) {
-        Log.d("CameraPreview","{} surfaceCreated({}) {}" + cameraHolder + holder);
+        LOG.trace("{} surfaceCreated({}) {}", cameraHolder, holder);
         if (cameraHolder != null) {
             usePreview();
         } else {
@@ -106,7 +101,7 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
     }
 
     @Override public void surfaceChanged(SurfaceHolder holder, int format, int w, int h) {
-        Log.d("CameraPreview","{} surfaceChanged({}, format={}, w={}, h={}) {}" + cameraHolder + holder + format + w + h);
+        LOG.trace("{} surfaceChanged({}, format={}, w={}, h={}) {}", cameraHolder, holder, format, w, h);
         if (cameraHolder != null) {
             stopPreview();
             updatePreview(w, h);
@@ -117,7 +112,7 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
     }
 
     @Override public void surfaceDestroyed(SurfaceHolder holder) {
-        Log.d("CameraPreview","{} surfaceDestroyed({})" +  cameraHolder + holder);
+        LOG.trace("{} surfaceDestroyed({})", cameraHolder, holder);
         if (cameraHolder != null) {
             stopPreview();
             releaseCamera();
@@ -127,19 +122,19 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
     }
 
     private void usePreview() {
-        Log.d("CameraPreview","{} Using preview"+ cameraHolder);
+        LOG.trace("{} Using preview", cameraHolder);
         try {
             if (cameraHolder != null) {
-                Log.d("CameraPreview","setPreviewDisplay {}" + getHolder());
+                LOG.trace("setPreviewDisplay {}", getHolder());
                 cameraHolder.camera.setPreviewDisplay(getHolder());
             }
         } catch (RuntimeException | IOException ex) {
-            Log.d("CameraPreview", "Error setting up camera preview" + ex);
+            LOG.error("Error setting up camera preview", ex);
         }
     }
 
     private void updatePreview(int w, int h) {
-        Log.d("CameraPreview", "{} Updating preview" + cameraHolder);
+        LOG.trace("{} Updating preview", cameraHolder);
         if (cameraHolder == null) {
             return;
         }
@@ -163,7 +158,17 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
                 getOptimalSize(cameraHolder.params.getSupportedPreviewSizes(), width, height);
         @SuppressWarnings("deprecation") android.hardware.Camera.Size pictureSize =
                 getOptimalSize(cameraHolder.params.getSupportedPictureSizes(), width, height);
-
+        LOG.debug("orient={}, rotate={}, landscape={}, "
+                        + "size: {}x{} ({}), "
+                        + "surface: {}x{} ({}), "
+                        + "preview: {}x{} ({}), "
+                        + "picture: {}x{} ({})",
+                displayDegrees, cameraDegrees, landscape,
+                width, height, (float)width / (float)height,
+                w, h, (float)w / (float)h,
+                previewSize.width, previewSize.height, (float)previewSize.width / (float)previewSize.height,
+                pictureSize.width, pictureSize.height, (float)pictureSize.width / (float)pictureSize.height
+        );
         cameraHolder.params.setPreviewSize(previewSize.width, previewSize.height);
         cameraHolder.params.setPictureSize(pictureSize.width, pictureSize.height);
         cameraHolder.params.setRotation(cameraDegrees);
@@ -173,38 +178,38 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
     }
 
     private void releaseCamera() {
-        Log.d("CameraPreview", "{} Releasing camera"+ cameraHolder);
+        LOG.trace("{} Releasing camera", cameraHolder);
         if (cameraHolder != null) {
             // Important: Call release() to release the camera for use by other
             // applications. Applications should release the camera immediately
             // during onPause() and re-open() it during onResume()).
-            Log.d("CameraPreview", "Releasing {}" + cameraHolder.camera);
+            LOG.info("Releasing {}", cameraHolder.camera);
             cameraHolder.camera.release();
             finished();
         }
     }
 
     private void startPreview() {
-        Log.d("CameraPreview", "{} Starting preview" + cameraHolder);
+        LOG.trace("{} Starting preview", cameraHolder);
         try {
             if (cameraHolder != null) {
                 cameraHolder.camera.startPreview();
                 listener.onResume(this);
             }
         } catch (RuntimeException ex) {
-            Log.d("CameraPreview", "Error starting camera preview" + ex);
+            LOG.error("Error starting camera preview", ex);
         }
     }
 
     private void stopPreview() {
-        Log.d("CameraPreview", "{} Stopping preview" + cameraHolder);
+        LOG.trace("{} Stopping preview", cameraHolder);
         try {
             if (cameraHolder != null) {
                 cameraHolder.camera.stopPreview();
                 listener.onPause(this);
             }
         } catch (RuntimeException ex) {
-            Log.d("CameraPreview", "ignore: tried to stop a non-existent preview" + ex);
+            LOG.warn("ignore: tried to stop a non-existent preview", ex);
         }
     }
 
@@ -233,7 +238,7 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
      */
     @SuppressWarnings("deprecation")
     public void takePicture(final CameraPictureListener callback, boolean autoFocus) {
-        Log.d("CameraPreview", "{} Taking picture" + cameraHolder);
+        LOG.trace("{} Taking picture", cameraHolder);
         if (cameraHolder == null) {
             return;
         }
@@ -261,7 +266,7 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
                 }
             });
         } catch (RuntimeException ex) {
-            Log.d("CameraPreview", ("Cannot take picture" + ex));
+            LOG.warn("Cannot take picture", ex);
             thread.post(new Runnable() {
                 @Override public void run() {
                     callback.onTaken((byte[])null);
@@ -271,13 +276,13 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
     }
 
     public void cancelTakePicture() {
-        Log.d("CameraPreview", "Cancel take picture");
+        LOG.trace("Cancel take picture");
         cancelAutoFocus();
         startPreview();
     }
 
     private void cancelAutoFocus() {
-        Log.d("CameraPreview", "{} Cancel auto-focus" + cameraHolder);
+        LOG.trace("{} Cancel auto-focus", cameraHolder);
         if (cameraHolder != null) {
             cameraHolder.camera.cancelAutoFocus();
         }
@@ -289,7 +294,7 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
      */
     @SuppressWarnings("deprecation")
     public void focus(final CameraPictureListener callback) {
-        Log.d("CameraPreview", "{} Camera focus" + cameraHolder);
+        LOG.trace("{} Camera focus", cameraHolder);
         if (cameraHolder == null) {
             return;
         }
@@ -306,7 +311,7 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
             try {
                 cameraHolder.camera.autoFocus(cameraCallback);
             } catch (RuntimeException ex) {
-                Log.d("CameraPreview", "Failed to autofocus" + ex);
+                LOG.warn("Failed to autofocus", ex);
                 cameraCallback.onAutoFocus(false, cameraHolder.camera);
             }
         } else {
@@ -335,14 +340,14 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
 
         public CameraHolder(int id) {
             cameraID = id;
-            Log.d("CameraPreview", "Opening camera");
+            LOG.trace("Opening camera");
             camera = android.hardware.Camera.open(cameraID);
-            Log.d("CameraPreview", "Opened camera");
+            LOG.trace("Opened camera");
             try {
-                Log.d("CameraPreview", "setPreviewDisplay null");
+                LOG.trace("setPreviewDisplay null");
                 camera.setPreviewDisplay(null);
             } catch (RuntimeException | IOException ex) {
-                Log.d("CameraPreview", "Error setting up camera preview" + ex);
+                LOG.error("Error setting up camera preview", ex);
             }
             cameraInfo = new android.hardware.Camera.CameraInfo();
             params = camera.getParameters();
@@ -393,7 +398,7 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
                             }
                         });
                     } catch (final RuntimeException ex) {
-                        Log.e("CameraPreview", "Error setting up camera #{}" + cameraID + ex);
+                        LOG.error("Error setting up camera #{}", cameraID, ex);
                         //noinspection ResourceType post should be safe to call from background
                         CameraPreview.this.post(new Runnable() {
                             @UiThread
@@ -441,7 +446,7 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
                 throw new IllegalStateException("Camera Thread already started");
             }
             mCameraThread = new CameraHandlerThread();
-            Log.d("CameraPreview","Starting thread {}" + mCameraThread);
+            LOG.trace("Starting thread {}", mCameraThread);
             mCameraThread.startOpenCamera();
         }
         @Override public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
@@ -449,7 +454,7 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
         }
         @Override public void surfaceDestroyed(SurfaceHolder holder) {
             if (mCameraThread != null) {
-                Log.d("CameraPreview", "Stopping thread {}" + mCameraThread);
+                LOG.trace("Stopping thread {}", mCameraThread);
                 mCameraThread.stopThread();
                 mCameraThread = null;
             }
@@ -498,6 +503,7 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
             }
         }
     }
+
     /** * @see android.view.Display#getOrientation()
      * @see android.view.Display#getRotation()
      * @param displayOrientation one of {@code Surface.ROTATION_d} constants
@@ -573,8 +579,7 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
         List<android.hardware.Camera.Size> sorted = new ArrayList<>(sizes);
         Collections.sort(sorted, new CameraSizeComparator(w, h));
         android.hardware.Camera.Size optimalSize = sorted.get(0);
-        Log.d("CameraPreview", "Optimal size selected is {}x{} from {}." +
-                optimalSize.width + optimalSize.height + sorted.toString());
+        LOG.debug("Optimal size selected is {}x{} from {}.", optimalSize.width, optimalSize.height, sorted.toString());
 
         return optimalSize;
     }
