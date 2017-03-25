@@ -4,6 +4,11 @@ import java.util.List;
 
 import javax.annotation.Nullable;
 
+/**
+ * @see <a href="https://www.adsbexchange.com/data/">Overview</a>
+ * @see <a href="http://www.virtualradarserver.co.uk/Documentation/Formats/AircraftList.aspx">Response documentation</a>
+ * @see <a href="https://github.com/vradarserver/vrs/blob/master/VirtualRadar.WebSite/Site/Web/script/vrs/enums.js">enums.js</a>
+ */
 public class AircraftListJsonResponse {
 	/**
 	 * Identifies the version of the aircraft list. Pass this in the ldv query string parameter on the next fetch.

@@ -24,8 +24,31 @@ public class Flight {
 	public String operator;
 	@Column
 	public String model;
+	@Column
+	public Integer engines;
+	@Column(nullable = false)
+	public EngineType engineType;
+	@Column(nullable = false)
+	public EnginePlacement enginePlacement;
 
 	@OneToMany(fetch = FetchType.EAGER)
 	@OrderBy("time ASC")
 	public List<Location> path = new ArrayList<>();
+
+	public enum EngineType {
+		None,
+		Piston,
+		Turbo,
+		Jet,
+		Electric
+	}
+
+	public enum EnginePlacement {
+		Unknown,
+		AftMounted,
+		WingBuried,
+		FuselageBuried,
+		NoseMounted,
+		WingMounted
+	}
 }
