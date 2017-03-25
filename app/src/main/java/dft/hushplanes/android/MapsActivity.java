@@ -12,7 +12,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
 	private static final Logger LOG = LoggerFactory.getLogger(MapsActivity.class);
 
-	private GoogleMap mMap;
+	private GoogleMap map;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -20,8 +20,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 		LOG.trace("Inflating map");
 		setContentView(R.layout.activity_maps);
 		// Obtain the SupportMapFragment and get notified when the map is ready to be used.
-		SupportMapFragment mapFragment = (SupportMapFragment)getSupportFragmentManager()
-				.findFragmentById(R.id.map);
+		SupportMapFragment mapFragment =
+				(SupportMapFragment)getSupportFragmentManager().findFragmentById(R.id.map);
 		mapFragment.getMapAsync(this);
 	}
 
@@ -36,11 +36,13 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 	 */
 	@Override
 	public void onMapReady(GoogleMap googleMap) {
-		mMap = googleMap;
+		map = googleMap;
 
-		// Add a marker in Sydney and move the camera
-		LatLng sydney = new LatLng(-34, 151);
-		mMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
-		mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
+		LatLng airfieldReferenceHeathrow = new LatLng(51.4775, -0.461389);
+		map.addMarker(new MarkerOptions()
+				.position(airfieldReferenceHeathrow)
+				.title("Airfield reference point in Heathrow Airport")
+		);
+		map.moveCamera(CameraUpdateFactory.newLatLngZoom(airfieldReferenceHeathrow, 10));
 	}
 }
