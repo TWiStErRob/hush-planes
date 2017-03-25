@@ -35,11 +35,11 @@ public class OverlayView extends GLSurfaceView implements SensorEventListener{
     private float mPreviousX;
     private float mPreviousY;
 
-    //TODO replace this with an accelerometer listener
     @Override
     public void onSensorChanged(SensorEvent e){
         if(e.sensor.getType() == Sensor.TYPE_ROTATION_VECTOR){
-                renderer.setAngle(e.values);
+                float[] vec = { e.values[0], e.values[1], e.values[2], e.values[3]};
+                renderer.setAngle(vec);
                 requestRender();
         }
     }

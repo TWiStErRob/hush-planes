@@ -20,12 +20,15 @@ public class OverlayRenderer implements GLSurfaceView.Renderer {
 
     private Triangle mTriangle;
     private Square mSquare;
+    private Cube mCube;
 
     // mMVPMatrix is an abbreviation for "Model View Projection Matrix"
     private final float[] mMVPMatrix = new float[16];
     private final float[] mProjectionMatrix = new float[16];
     private final float[] mViewMatrix = new float[16];
     private final float[] mRotationMatrix = new float[16];
+
+    private final float[] mtempMVPMatrix = new float[16];
 
     private float mAngle;
 
@@ -36,8 +39,10 @@ public class OverlayRenderer implements GLSurfaceView.Renderer {
         GLES20.glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
 
         mTriangle = new Triangle();
-        mSquare   = new Square();
+        mSquare = new Square();
+        mCube = new Cube();
     }
+
     @Override
     public void onSurfaceChanged(GL10 unused, int width, int height) {
         // Adjust the viewport based on geometry changes,
@@ -55,19 +60,43 @@ public class OverlayRenderer implements GLSurfaceView.Renderer {
 
     @Override
     public void onDrawFrame(GL10 unused) {
-        float[] scratch = new float[16];
+        //float[] scratch = new float[16];
 
         // Draw background color
         GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT | GLES20.GL_DEPTH_BUFFER_BIT);
+        float[] eye = {0, 0, -3, 1};
+        float[] forward = {0f, 0f, 0f, 1f};
+        float[] up = {0f, 1f, 0.0f, 1f};
 
+        float[] eyeR = {0, 0, -5, 1};
+        float[] forwardR = {0f, 0f, 0f, 1f};
+        float[] upR = {0f, 1f, 0.0f, 1f};
+        //Matrix.multiplyMV(eyeR,0, mRotationMatrix, 0, eye, 0);
+        //Matrix.multiplyMV(forwardR,0, mRotationMatrix, 0, forward, 0);
+        //Matrix.multiplyMV(upR,0, mRotationMatrix, 0, up, 0);
+        float[] translationM = new float[16];
+
+        float[] negtranslationM = new float[16];
+        Matrix.translateM(translationM, 0, 0, 0, -2);
+
+        //Matrix.multiplyMV(lookat,0,mRotationMatrix,0,straight,0);
         // Set the camera position (View matrix)
-        Matrix.setLookAtM(mViewMatrix, 0, 0, 0, -3, 0f, 0f, 0f, 0f, 1.0f, 0.0f);
+        Matrix.setLookAtM(mViewMatrix, 0, eyeR[0], eyeR[1], eyeR[2], forwardR[0], forwardR[1], forwardR[2], upR[0], upR[1], upR[2]);
 
         // Calculate the projection and view transformation
+        Matrix.translateM(mViewMatrix, 0, 0, 0, -2);
+        Matrix.multiplyMM(mViewMatrix, 0, mRotationMatrix, 0, mViewMatrix, 0);
+        Matrix.translateM(mViewMatrix, 0, 0, 0, 2);
         Matrix.multiplyMM(mMVPMatrix, 0, mProjectionMatrix, 0, mViewMatrix, 0);
-
+        //Matrix.multiplyMM(mMVPMatrix, 0, mtempMVPMatrix, 0, mRotationMatrix, 0);
+        //Matrix.setRotateM(mRotationMatrix, 0, mCubeRotation, 1.0f, 1.0f, 1.0f);
+        // Combine the rotation matrix with the projection and camera view
+        float[] mCubeMVPMatrix = new float[16];
+        //Matrix.multiplyMM(mFinalMVPMatrix, 0, mMVPMatrix, 0, translationM, 0);
+        Matrix.multiplyMM(mCubeMVPMatrix, 0, mMVPMatrix, 0, translationM, 0);
+        mCube.draw(mMVPMatrix);
         // Draw square
-        mSquare.draw(mMVPMatrix);
+        //mSquare.draw(mMVPMatrix);
         //TODO Rotate Camera instead of triangle
         // Create a rotation for the triangle
 
@@ -76,27 +105,29 @@ public class OverlayRenderer implements GLSurfaceView.Renderer {
         // long time = SystemClock.uptimeMillis() % 4000L;
         // float angle = 0.090f * ((int) time);
 
-       // Matrix.setRotateM(mRotationMatrix, 0, mAngle, 0, 0, 1.0f);
+        // Matrix.setRotateM(mRotationMatrix, 0, mAngle, 0, 0, 1.0f);
 
         // Combine the rotation matrix with the projection and camera view
         // Note that the mMVPMatrix factor *must be first* in order
         // for the matrix multiplication product to be correct.
-        Matrix.multiplyMM(scratch, 0, mMVPMatrix, 0, mRotationMatrix, 0);
+        //Matrix.multiplyMM(scratch, 0, mMVPMatrix, 0, mRotationMatrix, 0);
 
         // Draw triangle
-        mTriangle.draw(scratch);
+        //mTriangle.draw(scratch);
+
     }
+
     /**
      * Utility method for compiling a OpenGL shader.
-     *
+     * <p>
      * <p><strong>Note:</strong> When developing shaders, use the checkGlError()
      * method to debug shader coding errors.</p>
      *
-     * @param type - Vertex or fragment shader type.
+     * @param type       - Vertex or fragment shader type.
      * @param shaderCode - String containing the shader code.
      * @return - Returns an id for the shader.
      */
-    public static int loadShader(int type, String shaderCode){
+    public static int loadShader(int type, String shaderCode) {
 
         // create a vertex shader type (GLES20.GL_VERTEX_SHADER)
         // or a fragment shader type (GLES20.GL_FRAGMENT_SHADER)
@@ -112,11 +143,11 @@ public class OverlayRenderer implements GLSurfaceView.Renderer {
     /**
      * Utility method for debugging OpenGL calls. Provide the name of the call
      * just after making it:
-     *
+     * <p>
      * <pre>
      * mColorHandle = GLES20.glGetUniformLocation(mProgram, "vColor");
      * MyGLRenderer.checkGlError("glGetUniformLocation");</pre>
-     *
+     * <p>
      * If the operation is not successful, the check throws an error.
      *
      * @param glOperation - Name of the OpenGL call to check.
@@ -130,11 +161,11 @@ public class OverlayRenderer implements GLSurfaceView.Renderer {
     }
 
 
-
     /**
      * Sets the rotation angle of the triangle shape (mTriangle).
      */
     public void setAngle(float[] angle) {
         SensorManager.getRotationMatrixFromVector(mRotationMatrix, angle);
+        Matrix.rotateM(mRotationMatrix, 0, 90, 0, 0, 1);
     }
 }
