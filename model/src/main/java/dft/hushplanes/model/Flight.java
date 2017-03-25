@@ -28,4 +28,9 @@ public class Flight {
 	@OneToMany
 	@OrderBy("time ASC")
 	public List<Location> path = new ArrayList<>();
+
+	public Runway runway = null;
+    public String route = null;
+    public double deviation = 0;
+
 }
