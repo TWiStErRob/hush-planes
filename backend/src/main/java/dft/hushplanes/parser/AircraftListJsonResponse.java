@@ -142,7 +142,7 @@ public class AircraftListJsonResponse {
 		/**
 		 * True if the last position update is older than the display timeout value - usually only seen on MLAT aircraft in merged feeds.
 		 */
-		@Nullable Boolean PosStale;
+		boolean PosStale;
 		/**
 		 * True if the last message received for the aircraft was from a TIS-B source.
 		 * <b>Warning: from doc, use {@link #Tisb} that's found in data</b>
@@ -163,7 +163,7 @@ public class AircraftListJsonResponse {
 		/**
 		 * Vertical speed in feet per minute.
 		 */
-		@Nullable Integer Vsi;
+		@Nullable Float Vsi;
 		/**
 		 * 0 = vertical speed is barometric, 1 = vertical speed is geometric. Default to barometric until told otherwise.
 		 */

@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.PixelFormat;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
+import android.hardware.SensorEventListener;
 import android.opengl.GLSurfaceView;
 import android.view.MotionEvent;
 import android.view.Surface;
@@ -12,7 +13,7 @@ import android.view.Surface;
  * Created by hackathon on 25/03/2017.
  */
 
-public class OverlayView extends GLSurfaceView {
+public class OverlayView extends GLSurfaceView implements SensorEventListener{
     private final OverlayRenderer renderer;
 
     public OverlayView(Context context){
@@ -33,6 +34,17 @@ public class OverlayView extends GLSurfaceView {
     private float mPreviousY;
 
     //TODO replace this with an accelerometer listener
+    @Override
+    public void onSensorChanged(SensorEvent e){
+    }
+    public void onSensorChanged(SensorEvent e, int accuracy){
+        onSensorChanged(e);
+    }
+
+    @Override
+    public void onAccuracyChanged(Sensor sensor, int i) {
+
+    }
 
     @Override
     public boolean onTouchEvent(MotionEvent e) {
