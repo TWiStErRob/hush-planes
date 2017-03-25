@@ -31,7 +31,8 @@
 		</activity>
 		<activity
 			android:name=".AR_Tests.Augmented_Reality_Activity"
-			android:label="Overlay View">
+			android:label="Overlay View"
+			android:screenOrientation="landscape">
 			<intent-filter android:label="Hush! Planes Overlay">
 				<action android:name="android.intent.action.MAIN" />
 

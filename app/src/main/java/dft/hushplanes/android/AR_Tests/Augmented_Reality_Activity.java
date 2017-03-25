@@ -5,6 +5,7 @@ import android.opengl.GLSurfaceView;
 import android.os.Bundle;
 import android.view.ViewGroup;
 
+import dft.hushplanes.android.AR_Tests.Camera.CameraPreview;
 import dft.hushplanes.android.AR_Tests.Camera.Preview;
 import dft.hushplanes.android.AR_Tests.GL.OverlayView;
 
@@ -14,7 +15,7 @@ import dft.hushplanes.android.AR_Tests.GL.OverlayView;
 
 public class Augmented_Reality_Activity extends Activity {
     private GLSurfaceView GLView;
-    private Preview preview;
+    private CameraPreview preview;
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -22,7 +23,7 @@ public class Augmented_Reality_Activity extends Activity {
         // Create a GLSurfaceView instance and set it
         // as the ContentView for this Activity.
         GLView = new OverlayView(this);
-        preview = new Preview(this);
+        preview = new CameraPreview(this);
         setContentView(preview);
         addContentView(GLView, new ViewGroup.LayoutParams(ViewGroup.LayoutParams.FILL_PARENT, ViewGroup.LayoutParams.FILL_PARENT));
         GLView.setZOrderOnTop(true);
