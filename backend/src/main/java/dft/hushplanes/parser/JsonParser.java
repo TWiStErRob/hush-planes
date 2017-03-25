@@ -4,13 +4,11 @@ import java.io.*;
 import java.util.List;
 
 import org.hibernate.*;
-import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
-import org.hibernate.cfg.Configuration;
-import org.hibernate.service.ServiceRegistry;
 import org.slf4j.*;
 
 import com.google.gson.*;
 
+import dft.hushplanes.db.DatabaseModule;
 import dft.hushplanes.model.*;
 import dft.hushplanes.parser.AircraftListJsonResponse.Ac;
 
@@ -26,37 +24,34 @@ public class JsonParser {
 		if (!dbFile.delete() && dbFile.exists()) {
 			throw new IllegalStateException("Cannot delete DB");
 		}
-		Configuration configuration = new Configuration().configure();
-		ServiceRegistry serviceRegistry = new StandardServiceRegistryBuilder()
-				.applySettings(configuration.getProperties())
-				.build();
-		SessionFactory sessionFactory = configuration.buildSessionFactory(serviceRegistry);
-		Session session = sessionFactory.openSession();
-		Transaction transaction = session.beginTransaction();
+		Session session = DatabaseModule.provideSession();
 		try {
-			String folder = "h:\\temp\\sample";
-			Gson gson = new GsonBuilder().create();
-			for (File file : new File(folder).listFiles()) {
-				LOG.trace("Loading {}", file);
-				try (Reader reader = new FileReader(file)) {
-					AircraftListJsonResponse model =
-							gson.fromJson(reader, AircraftListJsonResponse.class);
-					save(session, file, model);
+			Transaction transaction = session.beginTransaction();
+			try {
+				String folder = "h:\\temp\\sample";
+				Gson gson = new GsonBuilder().create();
+				for (File file : new File(folder).listFiles()) {
+					LOG.trace("Loading {}", file);
+					try (Reader reader = new FileReader(file)) {
+						AircraftListJsonResponse model =
+								gson.fromJson(reader, AircraftListJsonResponse.class);
+						save(session, file, model);
+					}
 				}
+				transaction.commit();
+			} catch (Exception ex) {
+				transaction.rollback();
+				throw ex;
 			}
-			transaction.commit();
-		} catch (Exception ex) {
-			transaction.rollback();
-			throw ex;
+			@SuppressWarnings("unchecked")
+			List<Flight> list = session.createQuery("from Flight").list();
+			for (Flight flight : list) {
+				LOG.trace("Flight #{} {}: {} -> {}",
+						flight.id, flight.name, flight.origin, flight.destination);
+			}
+		} finally {
+			DatabaseModule.kill();
 		}
-		@SuppressWarnings("unchecked")
-		List<Flight> list = session.createQuery("from Flight").list();
-		for (Flight flight : list) {
-			LOG.trace("Flight #{} {}: {} -> {}",
-					flight.id, flight.name, flight.origin, flight.destination);
-		}
-		session.close();
-		sessionFactory.close();
 	}
 
 	private static void save(Session session, File file, AircraftListJsonResponse model) {
@@ -87,7 +82,7 @@ public class JsonParser {
 			loc.speed = aircraft.Spd;
 			loc.speed_vertical = aircraft.Vsi;
 			loc.bearing = aircraft.Brng;
-			
+
 			session.saveOrUpdate(loc);
 		}
 	}
