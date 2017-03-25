@@ -64,36 +64,35 @@ public class OverlayRenderer implements GLSurfaceView.Renderer {
 
         // Draw background color
         GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT | GLES20.GL_DEPTH_BUFFER_BIT);
-        float[] eye = {0, 0, -3, 1};
-        float[] forward = {0f, 0f, 0f, 1f};
-        float[] up = {0f, 1f, 0.0f, 1f};
+
 
         float[] eyeR = {0, 0, -5, 1};
         float[] forwardR = {0f, 0f, 0f, 1f};
         float[] upR = {0f, 1f, 0.0f, 1f};
-        //Matrix.multiplyMV(eyeR,0, mRotationMatrix, 0, eye, 0);
-        //Matrix.multiplyMV(forwardR,0, mRotationMatrix, 0, forward, 0);
-        //Matrix.multiplyMV(upR,0, mRotationMatrix, 0, up, 0);
-        float[] translationM = new float[16];
 
+        float[] translationM = new float[16];
+        Matrix.setIdentityM(translationM,0);
         float[] negtranslationM = new float[16];
-        Matrix.translateM(translationM, 0, 0, 0, -2);
+        Matrix.translateM(translationM, 0, 0, 0, 2);
 
         //Matrix.multiplyMV(lookat,0,mRotationMatrix,0,straight,0);
         // Set the camera position (View matrix)
         Matrix.setLookAtM(mViewMatrix, 0, eyeR[0], eyeR[1], eyeR[2], forwardR[0], forwardR[1], forwardR[2], upR[0], upR[1], upR[2]);
 
         // Calculate the projection and view transformation
-        Matrix.translateM(mViewMatrix, 0, 0, 0, -2);
+        Matrix.translateM(mViewMatrix, 0, 0, 2, 0);
         Matrix.multiplyMM(mViewMatrix, 0, mRotationMatrix, 0, mViewMatrix, 0);
-        Matrix.translateM(mViewMatrix, 0, 0, 0, 2);
+        Matrix.translateM(mViewMatrix, 0, 0, -2, 0);
         Matrix.multiplyMM(mMVPMatrix, 0, mProjectionMatrix, 0, mViewMatrix, 0);
         //Matrix.multiplyMM(mMVPMatrix, 0, mtempMVPMatrix, 0, mRotationMatrix, 0);
         //Matrix.setRotateM(mRotationMatrix, 0, mCubeRotation, 1.0f, 1.0f, 1.0f);
         // Combine the rotation matrix with the projection and camera view
         float[] mCubeMVPMatrix = new float[16];
         //Matrix.multiplyMM(mFinalMVPMatrix, 0, mMVPMatrix, 0, translationM, 0);
-        Matrix.multiplyMM(mCubeMVPMatrix, 0, mMVPMatrix, 0, translationM, 0);
+
+        Matrix.translateM(mMVPMatrix, 0, 0, 0, -5);
+        Matrix.rotateM(mMVPMatrix,0,180,1,0,0);
+        Matrix.translateM(mMVPMatrix, 0, 0, 0, 5);
         mCube.draw(mMVPMatrix);
         // Draw square
         //mSquare.draw(mMVPMatrix);
@@ -166,6 +165,6 @@ public class OverlayRenderer implements GLSurfaceView.Renderer {
      */
     public void setAngle(float[] angle) {
         SensorManager.getRotationMatrixFromVector(mRotationMatrix, angle);
-        Matrix.rotateM(mRotationMatrix, 0, 90, 0, 0, 1);
+
     }
 }
