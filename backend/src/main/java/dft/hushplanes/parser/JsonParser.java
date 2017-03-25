@@ -31,7 +31,7 @@ public class JsonParser {
 		try {
 			Transaction transaction = session.beginTransaction();
 			try {
-				String folder = "h:\\temp\\sample";
+				String folder = "h:\\resources\\data2";
 				Gson gson = new GsonBuilder().create();
 				for (File file : new File(folder).listFiles()) {
 					LOG.trace("Loading {}", file);
@@ -59,6 +59,9 @@ public class JsonParser {
 
 	private static void save(Session session, File file, AircraftListJsonResponse model) {
 		for (Ac aircraft : model.acList) {
+			if (aircraft.From == null || aircraft.To == null || aircraft.PosTime == null) {
+				continue;
+			}
 			Flight flight = (Flight)session.byId(Flight.class).load(aircraft.Id);
 			if (flight == null) {
 				flight = new Flight();
@@ -81,7 +84,7 @@ public class JsonParser {
 			Location loc = new Location();
 			loc.file = file.getName();
 			loc.flight = flight;
-			loc.time = aircraft.TSecs;
+			loc.time = aircraft.PosTime;
 			loc.latitude = aircraft.Lat;
 			loc.longitude = aircraft.Long;
 			loc.altitude = aircraft.Alt;
