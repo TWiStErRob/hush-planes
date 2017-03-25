@@ -5,6 +5,7 @@ import android.graphics.PixelFormat;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
+import android.hardware.SensorManager;
 import android.opengl.GLSurfaceView;
 import android.view.MotionEvent;
 import android.view.Surface;
@@ -19,6 +20,12 @@ public class OverlayView extends GLSurfaceView implements SensorEventListener{
     public OverlayView(Context context){
         super(context);
 
+        SensorManager sm = (SensorManager)context.getSystemService(Context.SENSOR_SERVICE);
+        if(sm.getSensorList(Sensor.TYPE_ROTATION_VECTOR).size()!=0){
+            Sensor s = sm.getSensorList(Sensor.TYPE_ROTATION_VECTOR).get(0);
+            sm.registerListener(this,s,SensorManager.SENSOR_DELAY_GAME);
+        }
+
         // Create an OpenGL ES 2.0 context
         setEGLContextClientVersion(2);
         setEGLConfigChooser(8, 8, 8, 8, 16, 0);
@@ -30,12 +37,17 @@ public class OverlayView extends GLSurfaceView implements SensorEventListener{
 
     }
     private final float TOUCH_SCALE_FACTOR = 180.0f / 320;
+    private final float ROT_SCALE_FACTOR = 100;
     private float mPreviousX;
     private float mPreviousY;
 
     //TODO replace this with an accelerometer listener
     @Override
     public void onSensorChanged(SensorEvent e){
+        if(e.sensor.getType() == Sensor.TYPE_ROTATION_VECTOR){
+                renderer.setAngle(e.values);
+                requestRender();
+        }
     }
     public void onSensorChanged(SensorEvent e, int accuracy){
         onSensorChanged(e);
@@ -46,7 +58,7 @@ public class OverlayView extends GLSurfaceView implements SensorEventListener{
 
     }
 
-    @Override
+   @Override
     public boolean onTouchEvent(MotionEvent e) {
         // MotionEvent reports input details from the touch screen
         // and other input controls. In this case, you are only
@@ -71,9 +83,7 @@ public class OverlayView extends GLSurfaceView implements SensorEventListener{
                     dy = dy * -1 ;
                 }
 
-                renderer.setAngle(
-                        renderer.getAngle() +
-                                ((dx + dy) * TOUCH_SCALE_FACTOR));  // = 180.0f / 320
+
                 requestRender();
         }
 

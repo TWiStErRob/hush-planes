@@ -6,7 +6,6 @@ import android.os.Bundle;
 import android.view.ViewGroup;
 
 import dft.hushplanes.android.AR_Tests.Camera.CameraPreview;
-import dft.hushplanes.android.AR_Tests.Camera.Preview;
 import dft.hushplanes.android.AR_Tests.GL.OverlayView;
 
 /**
