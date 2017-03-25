@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	android:layout_width="match_parent"
+	android:layout_height="match_parent"
+	>
+	<dft.hushplanes.android.AR_Tests.Camera.CameraPreview
+		android:id="@+id/camera"
+		android:layout_width="match_parent"
+		android:layout_height="match_parent"
+		/>
+	<dft.hushplanes.android.AR_Tests.GL.OverlayView
+		android:id="@+id/overlay"
+		android:layout_width="match_parent"
+		android:layout_height="match_parent"
+		/>
+</FrameLayout>

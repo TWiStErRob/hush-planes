@@ -2,23 +2,17 @@ package dft.hushplanes.android.AR_Tests.GL;
 
 import android.content.Context;
 import android.graphics.PixelFormat;
-import android.hardware.Sensor;
-import android.hardware.SensorEvent;
-import android.hardware.SensorEventListener;
+import android.hardware.*;
 import android.hardware.SensorManager;
 import android.opengl.GLSurfaceView;
+import android.util.AttributeSet;
 import android.view.MotionEvent;
-import android.view.Surface;
-
-/**
- * Created by hackathon on 25/03/2017.
- */
 
 public class OverlayView extends GLSurfaceView implements SensorEventListener{
     private final OverlayRenderer renderer;
 
-    public OverlayView(Context context){
-        super(context);
+	public OverlayView(Context context, AttributeSet attributeSet) {
+		super(context, attributeSet);
 
         SensorManager sm = (SensorManager)context.getSystemService(Context.SENSOR_SERVICE);
         if(sm.getSensorList(Sensor.TYPE_ROTATION_VECTOR).size()!=0){
@@ -36,16 +30,16 @@ public class OverlayView extends GLSurfaceView implements SensorEventListener{
         getHolder().setFormat(PixelFormat.TRANSLUCENT);
 
     }
-    private final float TOUCH_SCALE_FACTOR = 180.0f / 320;
-    private final float ROT_SCALE_FACTOR = 100;
+	private static final float TOUCH_SCALE_FACTOR = 180.0f / 320;
+	private static final float ROT_SCALE_FACTOR = 100;
     private float mPreviousX;
     private float mPreviousY;
 
-    //TODO replace this with an accelerometer listener
     @Override
     public void onSensorChanged(SensorEvent e){
         if(e.sensor.getType() == Sensor.TYPE_ROTATION_VECTOR){
-                renderer.setAngle(e.values);
+                float[] vec = { e.values[0], e.values[1], e.values[2], e.values[3]};
+                renderer.setAngle(vec);
                 requestRender();
         }
     }
