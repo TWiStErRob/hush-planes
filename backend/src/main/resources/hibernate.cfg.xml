@@ -10,10 +10,11 @@
 		<property name="hibernate.connection.url">jdbc:sqlite:/H:/temp/db.sqlite</property>
 		<property name="hibernate.connection.username"></property>
 		<property name="hibernate.connection.password"></property>
-		<property name="show_sql">true</property>
+		<property name="show_sql">false</property>
 		<property name="format_sql">true</property>
 		<!--<property name="hibernate.current_session_context_class">thread</property>-->
 		<property name="hbm2ddl.auto">update</property>
 		<mapping class="dft.hushplanes.model.Flight" />
+		<mapping class="dft.hushplanes.model.Location" />
 	</session-factory>
 </hibernate-configuration>
