@@ -84,11 +84,17 @@ public class JsonParser {
 			loc.time = aircraft.TSecs;
 			loc.latitude = aircraft.Lat;
 			loc.longitude = aircraft.Long;
+			loc.altitude = aircraft.Alt;
 			loc.speed = aircraft.Spd;
 			loc.speed_vertical = aircraft.Vsi;
 			loc.bearing = aircraft.Brng;
-
-			session.saveOrUpdate(loc);
+			flight.path.add(loc);
+			try {
+				session.saveOrUpdate(loc);
+			} catch (NonUniqueObjectException ex) {
+				LOG.warn("Duplicate: #{} @ {}", flight.id, loc.time);
+				continue;
+			}
 		}
 	}
 	private static @Nullable Integer parseEngines(@Nullable String engines) {

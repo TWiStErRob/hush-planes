@@ -103,7 +103,7 @@ public class AircraftListJsonResponse {
 		/**
 		 * The altitude in feet at standard pressure.
 		 */
-		@Nullable Integer Alt;
+		@Nullable Double Alt;
 		/**
 		 * The altitude adjusted for local air pressure, should be roughly the height above mean sea level.
 		 */
