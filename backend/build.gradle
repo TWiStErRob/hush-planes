@@ -1,11 +1,20 @@
 apply plugin: 'java'
-apply plugin: 'jetty'
+apply plugin: 'war'
+apply plugin: 'org.akhikhl.gretty'
 
-sourceCompatibility = 1.7
-
+buildscript {
+	repositories {
+		jcenter()
+	}
+	dependencies {
+		classpath 'org.akhikhl.gretty:gretty:+'
+	}
+}
 repositories {
     jcenter()
 }
+
+sourceCompatibility = 1.7
 
 dependencies {
 	compile project(':model')

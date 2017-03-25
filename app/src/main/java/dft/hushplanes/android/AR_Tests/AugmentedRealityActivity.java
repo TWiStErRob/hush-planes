@@ -33,7 +33,7 @@ public class AugmentedRealityActivity extends Activity {
 
 		App.getAppComponent().inject(this);
 		backend
-				.flights()
+				.flights(0)
 				.subscribeOn(Schedulers.io())
 				.observeOn(AndroidSchedulers.mainThread())
 				.subscribe(new SingleObserver<Flights>() {

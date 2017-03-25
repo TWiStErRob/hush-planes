@@ -21,7 +21,7 @@ public interface AppComponent {
 		@Provides
 		BackendService provideService() {
 			Retrofit retrofit = new Retrofit.Builder()
-					.baseUrl("http://endpoint")
+					.baseUrl("http://192.168.16.59:8080/backend/")
 					.addConverterFactory(GsonConverterFactory.create())
 					.addCallAdapterFactory(RxJava2CallAdapterFactory.create())
 					.build();

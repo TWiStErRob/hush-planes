@@ -25,7 +25,7 @@ public class Flight {
 	@Column
 	public String model;
 
-	@OneToMany
+	@OneToMany(fetch = FetchType.EAGER)
 	@OrderBy("time ASC")
 	public List<Location> path = new ArrayList<>();
 }
