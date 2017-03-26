@@ -9,27 +9,27 @@ import android.util.AttributeSet;
 import dft.hushplanes.model.Flights;
 
 public class OverlayView extends GLSurfaceView implements SensorEventListener{
-    private final OverlayRenderer renderer;
+	private final OverlayRenderer renderer = new OverlayRenderer();
 
 	public OverlayView(Context context, AttributeSet attributeSet) {
 		super(context, attributeSet);
 
-        SensorManager sm = (SensorManager)context.getSystemService(Context.SENSOR_SERVICE);
-        if(sm.getSensorList(Sensor.TYPE_ROTATION_VECTOR).size()!=0){
-            Sensor s = sm.getSensorList(Sensor.TYPE_ROTATION_VECTOR).get(0);
-            sm.registerListener(this,s,SensorManager.SENSOR_DELAY_GAME);
-        }
+		if (!isInEditMode()) {
+			SensorManager sm = (SensorManager)context.getSystemService(Context.SENSOR_SERVICE);
+			if (sm.getSensorList(Sensor.TYPE_ROTATION_VECTOR).size() != 0) {
+				Sensor s = sm.getSensorList(Sensor.TYPE_ROTATION_VECTOR).get(0);
+				sm.registerListener(this, s, SensorManager.SENSOR_DELAY_GAME);
+			}
 
-        // Create an OpenGL ES 2.0 context
-        setEGLContextClientVersion(2);
-        setEGLConfigChooser(8, 8, 8, 8, 16, 0);
-        renderer = new OverlayRenderer();
+			// Create an OpenGL ES 2.0 context
+			setEGLContextClientVersion(2);
+			setEGLConfigChooser(8, 8, 8, 8, 16, 0);
 
-        // Set the Renderer for drawing on the GLSurfaceView
-        setRenderer(renderer);
-        getHolder().setFormat(PixelFormat.TRANSLUCENT);
-
-    }
+			// Set the Renderer for drawing on the GLSurfaceView
+			setRenderer(renderer);
+			getHolder().setFormat(PixelFormat.TRANSLUCENT);
+		}
+	}
 
 
     @Override

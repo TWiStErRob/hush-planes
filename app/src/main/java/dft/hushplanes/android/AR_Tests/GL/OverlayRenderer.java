@@ -9,7 +9,6 @@ import android.hardware.SensorManager;
 import android.opengl.*;
 import android.util.Log;
 
-import dft.hushplanes.android.AR_Tests.Camera.CameraPreview;
 import dft.hushplanes.android.AR_Tests.NavigationMath.NavigationMath;
 import dft.hushplanes.model.*;
 
@@ -18,7 +17,7 @@ import dft.hushplanes.model.*;
  */
 
 public class OverlayRenderer implements GLSurfaceView.Renderer {
-    private static final Logger LOG = LoggerFactory.getLogger(CameraPreview.class);
+	private static final Logger LOG = LoggerFactory.getLogger(OverlayRenderer.class);
 
     private TriangleStrip mTriangleStrip;
     private Triangle mTriangle;
