@@ -89,6 +89,7 @@ public class AugmentedRealityActivity extends Activity {
 						progress.setVisibility(View.GONE);
 						LOG.info("Flights loaded: {}", flights.flights);
 						glView.setFlights(flights);
+						toast(glView.msg);
 					}
 					@Override public void onError(Throwable e) {
 						progress.setVisibility(View.GONE);

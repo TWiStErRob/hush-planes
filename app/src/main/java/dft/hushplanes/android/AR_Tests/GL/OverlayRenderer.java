@@ -5,12 +5,19 @@ import javax.microedition.khronos.opengles.GL10;
 
 import org.slf4j.*;
 
+import android.content.Context;
 import android.hardware.SensorManager;
 import android.opengl.*;
 import android.util.Log;
+import android.widget.Toast;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 import dft.hushplanes.android.AR_Tests.NavigationMath.NavigationMath;
 import dft.hushplanes.model.*;
+import io.reactivex.functions.Function;
 
 /**
  * Created by hackathon on 25/03/2017.
@@ -23,6 +30,7 @@ public class OverlayRenderer implements GLSurfaceView.Renderer {
     private Triangle mTriangle;
     private Square mSquare;
     private Cube mCube;
+    public float mindist;
 
     // mMVPMatrix is an abbreviation for "Model View Projection Matrix"
     private final float[] mMVPMatrix = new float[16];
@@ -62,12 +70,26 @@ public class OverlayRenderer implements GLSurfaceView.Renderer {
 
     public void setFlights(Flights flights) {
         this.flights = flights;
-    }
-    float dl = 0;
+        List<Float> dists = new ArrayList<>();
+        if(flights.flights.size()>0) {
+            for (Flight f : flights.flights) {
+                Location p = f.current;
+
+                float[] q2 = new float[4];
+                float[] h2 = {51.4775f, -0.461389f, 0};
+                float[] p2 = {(float) p.latitude, (float) p.longitude, (float) p.altitude};
+                float dist = NavigationMath.dist(h2, p2);
+                if(dist>300)
+                dists.add(dist);
+            }
+            mindist = Collections.min(dists);
+        }
+        }
+    //float dl = 0;
     @Override
 
     public void onDrawFrame(GL10 unused) {
-        dl += 0.001;
+        //dl += 0.001;
         //float[] scratch = new float[16];
 
         // Draw background color
@@ -117,7 +139,7 @@ public class OverlayRenderer implements GLSurfaceView.Renderer {
                 Matrix.translateM(mMVPMatrix2, 0, 0, 0, -5);
                 float[] q2 = new float[4];
                 float[] h2 = {51.4775f, -0.461389f, 0};
-                float[] p2 = {(float)p.latitude, (float)p.longitude, (float)p.altitude / 100000f};
+                float[] p2 = {(float)p.latitude, (float)p.longitude, (float)p.altitude / 50000f};
                 NavigationMath.getDirection(q2, p2, h2);
                 Matrix.rotateM(mMVPMatrix2, 0, q2[0], q2[1], q2[2], q2[3]);
 
