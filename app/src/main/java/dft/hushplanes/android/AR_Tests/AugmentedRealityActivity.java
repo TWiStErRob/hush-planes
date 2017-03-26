@@ -23,7 +23,7 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.*;
 import io.reactivex.schedulers.Schedulers;
-import io.reactivex.subjects.PublishSubject;
+import io.reactivex.subjects.*;
 
 public class AugmentedRealityActivity extends Activity {
 	private static final Logger LOG =
@@ -53,12 +53,11 @@ public class AugmentedRealityActivity extends Activity {
 						return 1489536000000L + TimeUnit.MINUTES.toMillis(integer);
 					}
 				})
-				.observeOn(AndroidSchedulers.mainThread())
 				.doOnNext(new Consumer<Long>() {
 					@Override public void accept(Long stamp) {
 						Calendar cal = Calendar.getInstance();
 						cal.setTimeInMillis(stamp);
-						time.setText(String.format(Locale.ROOT, "%1$tH:%<tM", cal));
+						time.setText(String.format(Locale.ROOT, "Time: %1$tH:%<tM", cal));
 					}
 				})
 				.debounce(500, TimeUnit.MILLISECONDS)
@@ -76,6 +75,7 @@ public class AugmentedRealityActivity extends Activity {
 								.toObservable();
 					}
 				})
+				.observeOn(AndroidSchedulers.mainThread())
 				.subscribe(new Observer<Flights>() {
 					@Override public void onSubscribe(Disposable d) {
 
@@ -97,7 +97,7 @@ public class AugmentedRealityActivity extends Activity {
 	}
 
 	private Observable<Integer> observeSeeker() {
-		final PublishSubject<Integer> seekSubject = PublishSubject.create();
+		final Subject<Integer> seekSubject = BehaviorSubject.create();
 		seeker.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
 			@Override public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
 				seekSubject.onNext(progress);
