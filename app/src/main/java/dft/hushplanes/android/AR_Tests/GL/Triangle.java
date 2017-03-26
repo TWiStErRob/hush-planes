@@ -62,7 +62,7 @@ public class Triangle {
     private final int vertexCount = triangleCoords.length / COORDS_PER_VERTEX;
     private final int vertexStride = COORDS_PER_VERTEX * 4; // 4 bytes per vertex
 
-    float color[] = { 0.63671875f, 0.76953125f, 0.22265625f, 0.0f };
+    public float color[] = { 0.63671875f, 0.76953125f, 0.22265625f, 0.8f };
 
     /**
      * Sets up the drawing object data for use in an OpenGL ES context.

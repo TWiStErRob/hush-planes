@@ -139,7 +139,7 @@ public class OverlayRenderer implements GLSurfaceView.Renderer {
                 Matrix.translateM(mMVPMatrix2, 0, 0, 0, -5);
                 float[] q2 = new float[4];
                 float[] h2 = {51.4775f, -0.461389f, 0};
-                float[] p2 = {(float)p.latitude, (float)p.longitude, (float)p.altitude / 50000f};
+                float[] p2 = {(float)p.latitude, (float)p.longitude, (float)p.altitude / 30000f};
                 NavigationMath.getDirection(q2, p2, h2);
                 Matrix.rotateM(mMVPMatrix2, 0, q2[0], q2[1], q2[2], q2[3]);
 
@@ -149,12 +149,16 @@ public class OverlayRenderer implements GLSurfaceView.Renderer {
                 //LOG.debug("Directio2n {} {} {} {}", (float)p.latitude, (float)p.longitude, (float)p.altitude, NavigationMath.dist(h2, p2));
 
                 Matrix.scaleM(mMVPMatrix2, 0, s/4, s/4, s/4);
+
+                mTriangle.color[0] = (float)Math.abs(Math.sin(f.id%10));
+                mTriangle.color[1] = (float)Math.abs(Math.cos(f.id%10));
+                mTriangle.color[2] = (float)Math.abs(Math.tan(f.id%9));
                 mTriangle.draw(mMVPMatrix2);
 
 
         }
 
-        mTriangleStrip.draw(mMVPMatrix);
+       // mTriangleStrip.draw(mMVPMatrix);
 
 
 
