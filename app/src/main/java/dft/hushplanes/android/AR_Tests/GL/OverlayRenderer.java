@@ -1,5 +1,14 @@
 package dft.hushplanes.android.AR_Tests.GL;
 
+import android.hardware.SensorManager;
+import android.opengl.GLES20;
+import android.opengl.GLSurfaceView;
+import android.opengl.Matrix;
+import android.util.Log;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
 
@@ -8,13 +17,19 @@ import android.opengl.*;
 import android.util.Log;
 
 import dft.hushplanes.model.Flights;
+import dft.hushplanes.android.AR_Tests.Camera.CameraPreview;
+import dft.hushplanes.android.AR_Tests.GL.Square;
+import dft.hushplanes.android.AR_Tests.GL.Triangle;
+import dft.hushplanes.android.AR_Tests.NavigationMath.NavigationMath;
 
 /**
  * Created by hackathon on 25/03/2017.
  */
 
 public class OverlayRenderer implements GLSurfaceView.Renderer {
+    private static final Logger LOG = LoggerFactory.getLogger(CameraPreview.class);
 
+    private TriangleStrip mTriangleStrip;
     private Triangle mTriangle;
     private Square mSquare;
     private Cube mCube;
@@ -35,8 +50,8 @@ public class OverlayRenderer implements GLSurfaceView.Renderer {
 
         // Set the background frame color
         GLES20.glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
-
         mTriangle = new Triangle();
+        mTriangleStrip = new TriangleStrip();
         mSquare = new Square();
         mCube = new Cube();
     }
@@ -58,9 +73,11 @@ public class OverlayRenderer implements GLSurfaceView.Renderer {
     public void setFlights(Flights flights) {
         this.flights = flights;
     }
-
+    float dl = 0;
     @Override
+
     public void onDrawFrame(GL10 unused) {
+        dl += 0.001;
         //float[] scratch = new float[16];
 
         // Draw background color
@@ -81,39 +98,51 @@ public class OverlayRenderer implements GLSurfaceView.Renderer {
         Matrix.setLookAtM(mViewMatrix, 0, eyeR[0], eyeR[1], eyeR[2], forwardR[0], forwardR[1], forwardR[2], upR[0], upR[1], upR[2]);
 
         // Calculate the projection and view transformation
-        Matrix.translateM(mViewMatrix, 0, 0, 2, 0);
+        Matrix.translateM(mViewMatrix, 0, 0, 5, 0);
         Matrix.multiplyMM(mViewMatrix, 0, mRotationMatrix, 0, mViewMatrix, 0);
-        Matrix.translateM(mViewMatrix, 0, 0, -2, 0);
+        Matrix.translateM(mViewMatrix, 0, 0, -5, 0);
         Matrix.multiplyMM(mMVPMatrix, 0, mProjectionMatrix, 0, mViewMatrix, 0);
         //Matrix.multiplyMM(mMVPMatrix, 0, mtempMVPMatrix, 0, mRotationMatrix, 0);
         //Matrix.setRotateM(mRotationMatrix, 0, mCubeRotation, 1.0f, 1.0f, 1.0f);
         // Combine the rotation matrix with the projection and camera view
         float[] mCubeMVPMatrix = new float[16];
         //Matrix.multiplyMM(mFinalMVPMatrix, 0, mMVPMatrix, 0, translationM, 0);
+        //mCube.draw(mMVPMatrix);
+
+
+        float[] id = new float[16];
+        Matrix.setIdentityM(id,0);
+        float[] mMVPMatrix2 = new float[16];
+        Matrix.multiplyMM(mMVPMatrix2, 0, mMVPMatrix, 0, id, 0);
 
         Matrix.translateM(mMVPMatrix, 0, 0, 0, -5);
-        Matrix.rotateM(mMVPMatrix,0,180,1,0,0);
+        float[] q = new float[4];
+        float[] h = {51.1537f,0.4543f,0};
+        float[] p = {51.730362f,0.91669f,34675.0f/1000f};
+        NavigationMath.getDirection(q,h,p);
+        //LOG.debug("Direction {} {} {} {}", q[0], q[1], q[2], q[3]);
+        Matrix.rotateM(mMVPMatrix,0,q[0],q[1],q[2],q[3]);
+
+        //Matrix.rotateM(mMVPMatrix,0,150,1,0,0);
         Matrix.translateM(mMVPMatrix, 0, 0, 0, 5);
-        mCube.draw(mMVPMatrix);
-        // Draw square
-        //mSquare.draw(mMVPMatrix);
-        //TODO Rotate Camera instead of triangle
-        // Create a rotation for the triangle
 
-        // Use the following code to generate constant rotation.
-        // Leave this code out when using TouchEvents.
-        // long time = SystemClock.uptimeMillis() % 4000L;
-        // float angle = 0.090f * ((int) time);
+        Matrix.translateM(mMVPMatrix2, 0, 0, 0, -5);
+        float[] q2 = new float[4];
+        float[] h2 = {51.1537f,0.4543f,0};
+        float[] p2 = {50.730362f + dl,0.81669f,1000.0f/1000f};
+        NavigationMath.getDirection(q2,h2,p2);
+        //LOG.debug("Directio2n {} {} {} {}", q2[0], q2[1], q2[2], q2[3]);
+        Matrix.rotateM(mMVPMatrix2,0,q2[0],q2[1],q2[2],q2[3]);
 
-        // Matrix.setRotateM(mRotationMatrix, 0, mAngle, 0, 0, 1.0f);
+        //Matrix.rotateM(mMVPMatrix,0,150,1,0,0);
+        Matrix.translateM(mMVPMatrix2, 0, 0, 0, 5);
+        float s = 1/NavigationMath.dist(h2, p2);
+        Matrix.scaleM(mMVPMatrix2,0,s,s,s);
 
-        // Combine the rotation matrix with the projection and camera view
-        // Note that the mMVPMatrix factor *must be first* in order
-        // for the matrix multiplication product to be correct.
-        //Matrix.multiplyMM(scratch, 0, mMVPMatrix, 0, mRotationMatrix, 0);
+        mTriangleStrip.draw(mMVPMatrix);
+        mTriangle.draw(mMVPMatrix2);
 
-        // Draw triangle
-        //mTriangle.draw(scratch);
+
 
     }
 
