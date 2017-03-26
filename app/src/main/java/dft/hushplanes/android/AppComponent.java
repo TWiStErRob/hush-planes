@@ -5,6 +5,8 @@ import java.util.concurrent.Callable;
 
 import javax.inject.*;
 
+import org.slf4j.*;
+
 import android.content.Context;
 
 import com.google.gson.Gson;
@@ -37,6 +39,8 @@ public interface AppComponent {
 		}
 	}
 	@Module class BackendModule {
+		private static final Logger LOG = LoggerFactory.getLogger(BackendModule.class);
+
 		@Provides
 		BackendService provideRealService() {
 			Retrofit retrofit = new Retrofit.Builder()
@@ -51,10 +55,12 @@ public interface AppComponent {
 		BackendService provideMockService(final Context context) {
 			return new BackendService() {
 				@Override
-				public Single<Flights> flights(long time) {
+				public Single<Flights> flights(final long time) {
+					LOG.info("Requesting flights for {}", time);
 					return Single.defer(new Callable<SingleSource<Flights>>() {
 						@Override
 						public SingleSource<Flights> call() throws Exception {
+							LOG.info("Really requesting times for {}", time);
 							InputStream open = context.getAssets().open("flights.json");
 							Flights flights = new Gson()
 									.fromJson(new InputStreamReader(open), Flights.class);

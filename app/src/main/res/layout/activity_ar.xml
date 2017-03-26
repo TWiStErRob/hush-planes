@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout
+<RelativeLayout
 	xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:tools="http://schemas.android.com/tools"
 	android:layout_width="match_parent"
 	android:layout_height="match_parent"
 	>
@@ -14,4 +15,25 @@
 		android:layout_width="match_parent"
 		android:layout_height="match_parent"
 		/>
-</FrameLayout>
+	<TextView
+		android:id="@+id/time"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_alignParentBottom="true"
+		android:shadowColor="@android:color/black"
+		android:shadowDx="0"
+		android:shadowDy="0"
+		android:shadowRadius="16"
+		android:textColor="@android:color/white"
+		android:textIsSelectable="false"
+		android:textSize="22sp"
+		tools:text="Hello"
+		/>
+	<SeekBar
+		android:id="@+id/seeker"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:layout_above="@id/time"
+		android:max="1439"
+		/>
+</RelativeLayout>
