@@ -1,50 +1,63 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
-	xmlns:android="http://schemas.android.com/apk/res/android"
-	xmlns:tools="http://schemas.android.com/tools"
+<android.support.design.widget.CoordinatorLayout
 	android:layout_width="match_parent"
 	android:layout_height="match_parent"
+	android:id="@+id/coordinator"
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:tools="http://schemas.android.com/tools"
 	>
-	<dft.hushplanes.android.AR_Tests.Camera.CameraPreview
-		android:id="@+id/camera"
+	<RelativeLayout
 		android:layout_width="match_parent"
 		android:layout_height="match_parent"
-		/>
-	<dft.hushplanes.android.AR_Tests.GL.OverlayView
-		android:id="@+id/overlay"
-		android:layout_width="match_parent"
-		android:layout_height="match_parent"
-		/>
-	<TextView
-		android:id="@+id/time"
-		android:layout_width="wrap_content"
-		android:layout_height="wrap_content"
-		android:layout_alignParentBottom="true"
-		android:shadowColor="@android:color/black"
-		android:shadowDx="0"
-		android:shadowDy="0"
-		android:shadowRadius="16"
-		android:textColor="@android:color/white"
-		android:textIsSelectable="false"
-		android:textSize="22sp"
-		tools:text="Hello"
-		/>
-	<SeekBar
-		android:id="@+id/seeker"
-		android:layout_width="match_parent"
-		android:layout_height="wrap_content"
-		android:layout_above="@id/time"
-		android:max="1439"
-		/>
-	<ProgressBar
-		android:id="@+id/progress"
-		style="?android:attr/progressBarStyleSmall"
-		android:layout_width="wrap_content"
-		android:layout_height="wrap_content"
-		android:layout_alignParentEnd="true"
-		android:layout_alignParentBottom="true"
-		android:layout_below="@id/seeker"
-		android:visibility="gone"
-		tools:visibility="visible"
-		/>
+		>
+		<dft.hushplanes.android.AR_Tests.Camera.CameraPreview
+			android:id="@+id/camera"
+			android:layout_width="match_parent"
+			android:layout_height="match_parent"
+			/>
+		<dft.hushplanes.android.AR_Tests.GL.OverlayView
+			android:id="@+id/overlay"
+			android:layout_width="match_parent"
+			android:layout_height="match_parent"
+			/>
+		<TextView
+			android:id="@+id/time"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_marginStart="8dp"
+			android:layout_marginEnd="8dp"
+			android:layout_alignParentBottom="true"
+			android:shadowColor="@android:color/black"
+			android:shadowDx="0"
+			android:shadowDy="0"
+			android:shadowRadius="16"
+			android:textColor="@android:color/white"
+			android:textIsSelectable="false"
+			android:textSize="22sp"
+			tools:text="Hello"
+			/>
+		<SeekBar
+			android:id="@+id/seeker"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:layout_marginStart="8dp"
+			android:layout_marginEnd="8dp"
+			android:layout_marginBottom="8dp"
+			android:layout_above="@id/time"
+			android:max="1439"
+			/>
+		<ProgressBar
+			android:id="@+id/progress"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_marginStart="8dp"
+			android:layout_marginEnd="8dp"
+			android:layout_marginBottom="8dp"
+			android:layout_alignParentBottom="true"
+			android:layout_alignParentEnd="true"
+			android:layout_below="@id/seeker"
+			android:visibility="gone"
+			tools:visibility="visible"
+			/>
 </RelativeLayout>
+</android.support.design.widget.CoordinatorLayout>

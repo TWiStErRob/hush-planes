@@ -4,11 +4,12 @@ import android.content.Context;
 import android.graphics.PixelFormat;
 import android.hardware.*;
 import android.opengl.GLSurfaceView;
+import android.support.v4.content.ContextCompat;
+import android.text.*;
+import android.text.style.*;
 import android.util.AttributeSet;
-import android.widget.Toast;
 
-import java.util.Collections;
-
+import dft.hushplanes.android.R;
 import dft.hushplanes.model.Flights;
 
 public class OverlayView extends GLSurfaceView implements SensorEventListener{
@@ -51,11 +52,25 @@ public class OverlayView extends GLSurfaceView implements SensorEventListener{
     public void onAccuracyChanged(Sensor sensor, int i) {
 
     }
-public String msg;
+	public SpannableStringBuilder msg;
 
-public void setFlights(Flights flights) {
-    renderer.setFlights(flights);
-	msg = "Closest Plane was " + (int)renderer.mindist + " feet away. That'd be just a " + (int)(renderer.mindist/300) + " minute walk if it had been on the ground.";
-
-}
+	public void setFlights(Flights flights) {
+		renderer.setFlights(flights);
+		msg = new SpannableStringBuilder();
+		msg.append("The closest plane is ");
+		int start;
+		start = msg.length();
+		msg.append(String.valueOf(Math.round(renderer.mindist))).append("\u00a0feet away");
+		color(msg, start, msg.length());
+		msg.append(".\nThat's just a ");
+		start = msg.length();
+		msg.append(String.valueOf(Math.round(renderer.mindist / 300))).append("\u00a0minute walk");
+		color(msg, start, msg.length());
+		msg.append(" walk on the ground.");
+	}
+	private void color(Spannable msg, int start, int end) {
+		int accent = ContextCompat.getColor(getContext(), R.color.colorAccent);
+		msg.setSpan(new ForegroundColorSpan(0xFF000000 | accent), start, end, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+		msg.setSpan(new StyleSpan(android.graphics.Typeface.BOLD), start, end, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+	}
 }

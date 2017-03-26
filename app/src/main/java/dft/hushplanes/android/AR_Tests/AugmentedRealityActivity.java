@@ -7,8 +7,9 @@ import javax.inject.*;
 
 import org.slf4j.*;
 
-import android.app.Activity;
 import android.os.Bundle;
+import android.support.design.widget.Snackbar;
+import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.*;
 import android.widget.SeekBar.OnSeekBarChangeListener;
@@ -26,7 +27,7 @@ import io.reactivex.functions.*;
 import io.reactivex.schedulers.Schedulers;
 import io.reactivex.subjects.*;
 
-public class AugmentedRealityActivity extends Activity {
+public class AugmentedRealityActivity extends AppCompatActivity {
 	private static final Logger LOG =
 			LoggerFactory.getLogger(AugmentedRealityActivity.class);
 
@@ -89,7 +90,10 @@ public class AugmentedRealityActivity extends Activity {
 						progress.setVisibility(View.GONE);
 						LOG.info("Flights loaded: {}", flights.flights);
 						glView.setFlights(flights);
-						toast(glView.msg);
+						int duration = (int)TimeUnit.SECONDS.toMillis(5);
+						Snackbar
+								.make(findViewById(R.id.coordinator), glView.msg, duration)
+								.show();
 					}
 					@Override public void onError(Throwable e) {
 						progress.setVisibility(View.GONE);
@@ -119,7 +123,7 @@ public class AugmentedRealityActivity extends Activity {
 		});
 		return seekSubject;
 	}
-	private void toast(String message) {
+	private void toast(CharSequence message) {
 		Toast.makeText(getApplicationContext(), message, Toast.LENGTH_LONG).show();
 	}
 }
