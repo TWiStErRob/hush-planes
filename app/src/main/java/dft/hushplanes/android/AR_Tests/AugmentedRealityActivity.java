@@ -62,15 +62,15 @@ public class AugmentedRealityActivity extends Activity {
 				})
 				.debounce(500, TimeUnit.MILLISECONDS)
 				.doOnNext(new Consumer<Long>() {
-					@Override public void accept(Long integer) throws Exception {
-						LOG.trace("Debounced {}", integer);
+					@Override public void accept(Long stamp) throws Exception {
+						LOG.trace("Debounced {}", stamp);
 					}
 				})
 				.flatMap(new Function<Long, ObservableSource<Flights>>() {
 					@Override
-					public ObservableSource<Flights> apply(Long integer) {
+					public ObservableSource<Flights> apply(Long stamp) {
 						return backend
-								.flights(1489536000000L + TimeUnit.MINUTES.toMillis(integer))
+								.flights(stamp)
 								.subscribeOn(Schedulers.io())
 								.toObservable();
 					}

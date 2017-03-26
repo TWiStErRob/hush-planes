@@ -13,7 +13,6 @@ import dft.hushplanes.model.*;
 
 @Path("/flights")
 public class Service {
-	private static final long MIN_15 = TimeUnit.MINUTES.toMillis(1);
 
 	@GET
 	@Path("/full")
@@ -37,13 +36,18 @@ public class Service {
 		@SuppressWarnings("unchecked")
 		List<Location> list = session
 				.createQuery("select loc from Location as loc"
-						+ " where loc.time between :start_time and :end_time")
+						+ " where loc.time between :start_time and :end_time"
+						+ " order by time asc")
 				.setParameter("start_time", searchedTime)
-				.setParameter("end_time", searchedTime + MIN_15)
+				.setParameter("end_time", searchedTime + TimeUnit.MINUTES.toMillis(1))
 				.list();
 		Flights flights = new Flights();
-		Collection<Flight> sum = new HashSet<>();
+		Set<Flight> sum = new HashSet<>();
 		for (Location loc : list) {
+			if (loc.flight.current == null
+					|| Math.abs(searchedTime - loc.time) < Math.abs(searchedTime - loc.flight.current.time)) {
+				loc.flight.current = loc;
+			}
 			sum.add(loc.flight);
 		}
 		flights.flights.addAll(sum);

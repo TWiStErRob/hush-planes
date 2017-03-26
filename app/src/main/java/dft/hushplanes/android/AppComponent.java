@@ -44,7 +44,7 @@ public interface AppComponent {
 		@Provides
 		BackendService provideRealService() {
 			Retrofit retrofit = new Retrofit.Builder()
-					.baseUrl("http://192.168.16.59:8080/backend/")
+					.baseUrl("http://192.168.16.59:8180/backend/")
 					.addConverterFactory(GsonConverterFactory.create())
 					.addCallAdapterFactory(RxJava2CallAdapterFactory.create())
 					.build();

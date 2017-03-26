@@ -35,6 +35,9 @@ public class Flight {
 	@OrderBy("time ASC")
 	public List<Location> path = new ArrayList<>();
 
+	@Transient
+	public Location current;
+
 	@Column
 	public Runway runway;
 	@Column

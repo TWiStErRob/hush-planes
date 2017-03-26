@@ -1,28 +1,17 @@
 package dft.hushplanes.android.AR_Tests.GL;
 
-import android.hardware.SensorManager;
-import android.opengl.GLES20;
-import android.opengl.GLSurfaceView;
-import android.opengl.Matrix;
-import android.util.Log;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
+
+import org.slf4j.*;
 
 import android.hardware.SensorManager;
 import android.opengl.*;
 import android.util.Log;
 
-import dft.hushplanes.model.Flight;
-import dft.hushplanes.model.Flights;
 import dft.hushplanes.android.AR_Tests.Camera.CameraPreview;
-import dft.hushplanes.android.AR_Tests.GL.Square;
-import dft.hushplanes.android.AR_Tests.GL.Triangle;
 import dft.hushplanes.android.AR_Tests.NavigationMath.NavigationMath;
-import dft.hushplanes.model.Location;
+import dft.hushplanes.model.*;
 
 /**
  * Created by hackathon on 25/03/2017.
@@ -123,7 +112,7 @@ public class OverlayRenderer implements GLSurfaceView.Renderer {
         Matrix.translateM(mMVPMatrix, 0, 0, 0, 5);
         if (flights == null) return;
         for(Flight f : flights.flights){
-            Location p = f.path.get(f.path.size()/2);
+            Location p = f.current;
 
                 Matrix.multiplyMM(mMVPMatrix2, 0, mMVPMatrix, 0, id, 0);
                 Matrix.translateM(mMVPMatrix2, 0, 0, 0, -5);
