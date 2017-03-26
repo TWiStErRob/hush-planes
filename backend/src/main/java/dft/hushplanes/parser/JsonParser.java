@@ -2,6 +2,7 @@ package dft.hushplanes.parser;
 
 import java.io.*;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import javax.annotation.*;
 
@@ -16,6 +17,9 @@ import dft.hushplanes.model.Flight.*;
 import dft.hushplanes.parser.AircraftListJsonResponse.Ac;
 
 public class JsonParser {
+
+	private static final long MIN_1 = TimeUnit.MINUTES.toMillis(1);
+
 	static {
 		System.setProperty("org.jboss.logging.provider", "slf4j");
 	}
@@ -84,21 +88,24 @@ public class JsonParser {
 			Location loc = new Location();
 			loc.file = file.getName();
 			loc.flight = flight;
-			loc.time = aircraft.PosTime;
+			loc.time = round(aircraft.PosTime);
 			loc.latitude = aircraft.Lat;
 			loc.longitude = aircraft.Long;
 			loc.altitude = aircraft.Alt;
 			loc.speed = aircraft.Spd;
 			loc.speed_vertical = aircraft.Vsi;
 			loc.bearing = aircraft.Brng;
-			flight.path.add(loc);
 			try {
 				session.saveOrUpdate(loc);
+				flight.path.add(loc);
 			} catch (NonUniqueObjectException ex) {
-				LOG.warn("Duplicate: #{} @ {}", flight.id, loc.time);
+				//LOG.warn("Duplicate: #{} @ {}", flight.id, loc.time);
 				continue;
 			}
 		}
+	}
+	private static long round(long time) {
+		return time / MIN_1 * MIN_1;
 	}
 	private static @Nullable Integer parseEngines(@Nullable String engines) {
 		if (engines != null) {
