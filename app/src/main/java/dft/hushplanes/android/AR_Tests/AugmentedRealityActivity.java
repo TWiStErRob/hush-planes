@@ -9,6 +9,7 @@ import org.slf4j.*;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.*;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 
@@ -34,6 +35,7 @@ public class AugmentedRealityActivity extends Activity {
 	private SeekBar seeker;
 	private TextView time;
 	private OverlayView glView;
+	private View progress;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -41,6 +43,7 @@ public class AugmentedRealityActivity extends Activity {
 		setContentView(R.layout.activity_ar);
 
 		seeker = (SeekBar)findViewById(R.id.seeker);
+		progress = findViewById(R.id.progress);
 		time = (TextView)findViewById(R.id.time);
 		glView = (OverlayView)findViewById(R.id.overlay);
 		glView.setZOrderOnTop(true);
@@ -60,10 +63,12 @@ public class AugmentedRealityActivity extends Activity {
 						time.setText(String.format(Locale.ROOT, "Time: %1$tH:%<tM", cal));
 					}
 				})
-				.debounce(500, TimeUnit.MILLISECONDS)
+				.debounce(500, TimeUnit.MILLISECONDS, AndroidSchedulers.mainThread())
+				.observeOn(AndroidSchedulers.mainThread())
 				.doOnNext(new Consumer<Long>() {
 					@Override public void accept(Long stamp) throws Exception {
 						LOG.trace("Debounced {}", stamp);
+						progress.setVisibility(View.VISIBLE);
 					}
 				})
 				.flatMap(new Function<Long, ObservableSource<Flights>>() {
@@ -81,10 +86,12 @@ public class AugmentedRealityActivity extends Activity {
 
 					}
 					@Override public void onNext(Flights flights) {
+						progress.setVisibility(View.GONE);
 						LOG.info("Flights loaded: {}", flights.flights);
 						glView.setFlights(flights);
 					}
 					@Override public void onError(Throwable e) {
+						progress.setVisibility(View.GONE);
 						LOG.warn("Failed", e);
 						toast(e.toString());
 					}

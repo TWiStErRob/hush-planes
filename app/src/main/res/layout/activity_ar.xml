@@ -36,4 +36,15 @@
 		android:layout_above="@id/time"
 		android:max="1439"
 		/>
+	<ProgressBar
+		android:id="@+id/progress"
+		style="?android:attr/progressBarStyleSmall"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_alignParentEnd="true"
+		android:layout_alignParentBottom="true"
+		android:layout_below="@id/seeker"
+		android:visibility="gone"
+		tools:visibility="visible"
+		/>
 </RelativeLayout>
