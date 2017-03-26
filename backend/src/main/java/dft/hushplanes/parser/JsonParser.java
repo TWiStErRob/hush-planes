@@ -83,7 +83,9 @@ public class JsonParser {
 				flight.enginePlacement = enginePlacement(aircraft.EngMount);
 				session.saveOrUpdate(flight);
 			}
-
+			if (aircraft.Lat == null || aircraft.Long == null || aircraft.Alt == null) {
+				continue;
+			}
 			if (aircraft.PosStale) {
 				continue;
 			}
