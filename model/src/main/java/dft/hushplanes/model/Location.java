@@ -4,11 +4,14 @@ import java.io.Serializable;
 
 import javax.persistence.*;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import dft.hushplanes.model.Location.CompositeId;
 
 @Entity
 @Table
 @IdClass(CompositeId.class)
+@JsonIgnoreProperties({"flight", "file"})
 public class Location {
 	@Id
 	@ManyToOne
@@ -21,6 +24,8 @@ public class Location {
 	public Double latitude;
 	@Column
 	public Double longitude;
+	@Column
+	public Double altitude;
 	@Column
 	public Float speed;
 	@Column

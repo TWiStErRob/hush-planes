@@ -9,5 +9,6 @@ repositories {
 dependencies {
     compile 'com.google.code.findbugs:jsr305:3.0.0'
     compile 'org.hibernate.javax.persistence:hibernate-jpa-2.1-api:1.0.0.Final'
+    compile 'com.fasterxml.jackson.core:jackson-annotations:2.3.2'
     testCompile 'junit:junit:4.12'
 }

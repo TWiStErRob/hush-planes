@@ -2,6 +2,7 @@ package dft.hushplanes.parser;
 
 import java.io.*;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import javax.annotation.*;
 
@@ -16,6 +17,9 @@ import dft.hushplanes.model.Flight.*;
 import dft.hushplanes.parser.AircraftListJsonResponse.Ac;
 
 public class JsonParser {
+
+	private static final long MIN_1 = TimeUnit.MINUTES.toMillis(1);
+
 	static {
 		System.setProperty("org.jboss.logging.provider", "slf4j");
 	}
@@ -31,7 +35,7 @@ public class JsonParser {
 		try {
 			Transaction transaction = session.beginTransaction();
 			try {
-				String folder = "h:\\temp\\sample";
+				String folder = "h:\\resources\\data2";
 				Gson gson = new GsonBuilder().create();
 				for (File file : new File(folder).listFiles()) {
 					LOG.trace("Loading {}", file);
@@ -59,6 +63,9 @@ public class JsonParser {
 
 	private static void save(Session session, File file, AircraftListJsonResponse model) {
 		for (Ac aircraft : model.acList) {
+			if (aircraft.From == null || aircraft.To == null || aircraft.PosTime == null) {
+				continue;
+			}
 			Flight flight = (Flight)session.byId(Flight.class).load(aircraft.Id);
 			if (flight == null) {
 				flight = new Flight();
@@ -81,15 +88,24 @@ public class JsonParser {
 			Location loc = new Location();
 			loc.file = file.getName();
 			loc.flight = flight;
-			loc.time = aircraft.TSecs;
+			loc.time = round(aircraft.PosTime);
 			loc.latitude = aircraft.Lat;
 			loc.longitude = aircraft.Long;
+			loc.altitude = aircraft.Alt;
 			loc.speed = aircraft.Spd;
 			loc.speed_vertical = aircraft.Vsi;
 			loc.bearing = aircraft.Brng;
-
-			session.saveOrUpdate(loc);
+			try {
+				session.saveOrUpdate(loc);
+				flight.path.add(loc);
+			} catch (NonUniqueObjectException ex) {
+				//LOG.warn("Duplicate: #{} @ {}", flight.id, loc.time);
+				continue;
+			}
 		}
+	}
+	private static long round(long time) {
+		return time / MIN_1 * MIN_1;
 	}
 	private static @Nullable Integer parseEngines(@Nullable String engines) {
 		if (engines != null) {
