@@ -3,10 +3,11 @@ package dft.hushplanes.android.AR_Tests.GL;
 import android.content.Context;
 import android.graphics.PixelFormat;
 import android.hardware.*;
-import android.hardware.SensorManager;
 import android.opengl.GLSurfaceView;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
+
+import dft.hushplanes.model.Flights;
 
 public class OverlayView extends GLSurfaceView implements SensorEventListener{
     private final OverlayRenderer renderer;
@@ -86,4 +87,7 @@ public class OverlayView extends GLSurfaceView implements SensorEventListener{
         return true;
     }
 
+	public void setFlights(Flights flights) {
+		renderer.setFlights(flights);
+	}
 }

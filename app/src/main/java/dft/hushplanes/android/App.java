@@ -2,6 +2,8 @@ package dft.hushplanes.android;
 
 import android.app.Application;
 
+import dft.hushplanes.android.AppComponent.AppModule;
+
 public class App extends Application {
 	private static App instance;
 	private AppComponent component;
@@ -10,7 +12,11 @@ public class App extends Application {
 	public void onCreate() {
 		super.onCreate();
 		instance = this;
-		component = DaggerAppComponent.create();
+		component = DaggerAppComponent
+				.builder()
+				.appModule(new AppModule(this))
+				.build()
+		;
 	}
 
 	public static AppComponent getAppComponent() {
