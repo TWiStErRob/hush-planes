@@ -1,16 +1,13 @@
 package dft.hushplanes.android.AR_Tests.GL;
 
-import android.hardware.SensorManager;
-import android.opengl.GLES20;
-import android.opengl.GLSurfaceView;
-import android.opengl.Matrix;
-import android.util.Log;
-
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
 
-import dft.hushplanes.android.AR_Tests.GL.Square;
-import dft.hushplanes.android.AR_Tests.GL.Triangle;
+import android.hardware.SensorManager;
+import android.opengl.*;
+import android.util.Log;
+
+import dft.hushplanes.model.Flights;
 
 /**
  * Created by hackathon on 25/03/2017.
@@ -31,6 +28,7 @@ public class OverlayRenderer implements GLSurfaceView.Renderer {
     private final float[] mtempMVPMatrix = new float[16];
 
     private float mAngle;
+    private Flights flights;
 
     @Override
     public void onSurfaceCreated(GL10 unused, EGLConfig config) {
@@ -57,6 +55,9 @@ public class OverlayRenderer implements GLSurfaceView.Renderer {
 
     }
 
+    public void setFlights(Flights flights) {
+        this.flights = flights;
+    }
 
     @Override
     public void onDrawFrame(GL10 unused) {

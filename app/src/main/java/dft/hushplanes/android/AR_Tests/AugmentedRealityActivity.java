@@ -1,14 +1,14 @@
 package dft.hushplanes.android.AR_Tests;
 
-import javax.inject.Inject;
+import javax.inject.*;
 
 import org.slf4j.*;
 
 import android.app.Activity;
-import android.opengl.GLSurfaceView;
 import android.os.Bundle;
 import android.widget.Toast;
 
+import dft.hushplanes.android.AR_Tests.GL.OverlayView;
 import dft.hushplanes.android.*;
 import dft.hushplanes.android.data.BackendService;
 import dft.hushplanes.model.Flights;
@@ -21,14 +21,15 @@ public class AugmentedRealityActivity extends Activity {
 	private static final Logger LOG =
 			LoggerFactory.getLogger(AugmentedRealityActivity.class);
 
-	@Inject BackendService backend;
+	@Inject @Named("mock")
+	BackendService backend;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_ar);
 
-		GLSurfaceView glView = (GLSurfaceView)findViewById(R.id.overlay);
+		final OverlayView glView = (OverlayView)findViewById(R.id.overlay);
 		glView.setZOrderOnTop(true);
 
 		App.getAppComponent().inject(this);
@@ -42,6 +43,7 @@ public class AugmentedRealityActivity extends Activity {
 					}
 					@Override public void onSuccess(Flights flights) {
 						toast(flights.flights.toString());
+						glView.setFlights(flights);
 					}
 					@Override public void onError(Throwable throwable) {
 						LOG.warn("Failed", throwable);
