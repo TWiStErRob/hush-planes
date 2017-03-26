@@ -21,11 +21,11 @@ public class Location {
 	public long time;
 
 	@Column
-	public Double latitude;
+	public double latitude;
 	@Column
-	public Double longitude;
+	public double longitude;
 	@Column
-	public Double altitude;
+	public double altitude;
 	@Column
 	public Float speed;
 	@Column

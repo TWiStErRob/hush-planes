@@ -16,11 +16,13 @@ import android.hardware.SensorManager;
 import android.opengl.*;
 import android.util.Log;
 
+import dft.hushplanes.model.Flight;
 import dft.hushplanes.model.Flights;
 import dft.hushplanes.android.AR_Tests.Camera.CameraPreview;
 import dft.hushplanes.android.AR_Tests.GL.Square;
 import dft.hushplanes.android.AR_Tests.GL.Triangle;
 import dft.hushplanes.android.AR_Tests.NavigationMath.NavigationMath;
+import dft.hushplanes.model.Location;
 
 /**
  * Created by hackathon on 25/03/2017.
@@ -113,34 +115,37 @@ public class OverlayRenderer implements GLSurfaceView.Renderer {
         float[] id = new float[16];
         Matrix.setIdentityM(id,0);
         float[] mMVPMatrix2 = new float[16];
-        Matrix.multiplyMM(mMVPMatrix2, 0, mMVPMatrix, 0, id, 0);
-
         Matrix.translateM(mMVPMatrix, 0, 0, 0, -5);
-        float[] q = new float[4];
-        float[] h = {51.1537f,0.4543f,0};
-        float[] p = {51.730362f,0.91669f,34675.0f/1000f};
-        NavigationMath.getDirection(q,h,p);
-        //LOG.debug("Direction {} {} {} {}", q[0], q[1], q[2], q[3]);
-        Matrix.rotateM(mMVPMatrix,0,q[0],q[1],q[2],q[3]);
+
+        Matrix.rotateM(mMVPMatrix,0,180,1,0,0);
 
         //Matrix.rotateM(mMVPMatrix,0,150,1,0,0);
         Matrix.translateM(mMVPMatrix, 0, 0, 0, 5);
+        if (flights == null) return;
+        for(Flight f : flights.flights){
+            Location p = f.path.get(f.path.size()/2);
 
-        Matrix.translateM(mMVPMatrix2, 0, 0, 0, -5);
-        float[] q2 = new float[4];
-        float[] h2 = {51.1537f,0.4543f,0};
-        float[] p2 = {50.730362f + dl,0.81669f,1000.0f/1000f};
-        NavigationMath.getDirection(q2,h2,p2);
-        //LOG.debug("Directio2n {} {} {} {}", q2[0], q2[1], q2[2], q2[3]);
-        Matrix.rotateM(mMVPMatrix2,0,q2[0],q2[1],q2[2],q2[3]);
+                Matrix.multiplyMM(mMVPMatrix2, 0, mMVPMatrix, 0, id, 0);
+                Matrix.translateM(mMVPMatrix2, 0, 0, 0, -5);
+                float[] q2 = new float[4];
+                float[] h2 = {51.4775f, -0.461389f, 0};
+                float[] p2 = {(float)p.latitude, (float)p.longitude, (float)p.altitude / 100000f};
+                NavigationMath.getDirection(q2, p2, h2);
+                Matrix.rotateM(mMVPMatrix2, 0, q2[0], q2[1], q2[2], q2[3]);
 
-        //Matrix.rotateM(mMVPMatrix,0,150,1,0,0);
-        Matrix.translateM(mMVPMatrix2, 0, 0, 0, 5);
-        float s = 1/NavigationMath.dist(h2, p2);
-        Matrix.scaleM(mMVPMatrix2,0,s,s,s);
+                //Matrix.rotateM(mMVPMatrix,0,150,1,0,0);
+                Matrix.translateM(mMVPMatrix2, 0, 0, 0, 5);
+                float s = (float)Math.atan((1-NavigationMath.dist(h2, p2)/0.8)/2) + 1;
+                //LOG.debug("Directio2n {} {} {} {}", (float)p.latitude, (float)p.longitude, (float)p.altitude, NavigationMath.dist(h2, p2));
+
+                Matrix.scaleM(mMVPMatrix2, 0, s/4, s/4, s/4);
+                mTriangle.draw(mMVPMatrix2);
+
+
+        }
 
         mTriangleStrip.draw(mMVPMatrix);
-        mTriangle.draw(mMVPMatrix2);
+
 
 
 
