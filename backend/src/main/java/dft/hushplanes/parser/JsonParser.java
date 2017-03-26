@@ -27,7 +27,7 @@ public class JsonParser {
 	private static final Logger LOG = LoggerFactory.getLogger(JsonParser.class);
 
 	public static void main(String... args) throws Throwable {
-		File dbFile = new File("h:\\temp\\db.sqlite");
+		File dbFile = new File("D:\\temp\\db.sqlite");
 		if (!dbFile.delete() && dbFile.exists()) {
 			throw new IllegalStateException("Cannot delete DB");
 		}
@@ -35,10 +35,11 @@ public class JsonParser {
 		try {
 			Transaction transaction = session.beginTransaction();
 			try {
-				String folder = "h:\\resources\\data2";
+				String folder = "D:\\HACK\\Aviation Data\\data";
 				Gson gson = new GsonBuilder().create();
 				for (File file : new File(folder).listFiles()) {
-					LOG.trace("Loading {}", file);
+                    System.out.println(file);
+                    LOG.trace("Loading {}", file);
 					try (Reader reader = new FileReader(file)) {
 						AircraftListJsonResponse model =
 								gson.fromJson(reader, AircraftListJsonResponse.class);
@@ -53,7 +54,8 @@ public class JsonParser {
 			@SuppressWarnings("unchecked")
 			List<Flight> list = session.createQuery("from Flight").list();
 			for (Flight flight : list) {
-				LOG.trace("Flight #{} {}: {} -> {}",
+                System.out.println(flight.name);
+                LOG.trace("Flight #{} {}: {} -> {}",
 						flight.id, flight.name, flight.origin, flight.destination);
 			}
 		} finally {

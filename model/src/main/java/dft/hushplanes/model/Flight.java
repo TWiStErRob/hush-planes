@@ -35,11 +35,12 @@ public class Flight {
 	@OrderBy("time ASC")
 	public List<Location> path = new ArrayList<>();
 
-	public Runway runway = null;
-
-    public String route = null;
-
-    public double deviation = 0;
+	@Column
+	public Runway runway;
+	@Column
+    public String route;
+	@Column
+    public Double deviation;
 
 	public enum EngineType {
 		None,
